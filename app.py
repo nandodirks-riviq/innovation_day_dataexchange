@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 import os
 import urllib.parse 
+import pyodbc
 
 app = Flask(__name__)
 
@@ -10,7 +11,7 @@ dbuser=os.environ['DBUSER']
 dbpass=os.environ['DBPASS']
 dbhost=os.environ['DBHOST']
 dbname=os.environ['DBNAME']
-params = urllib.parse.quote_plus(f'Driver={{ODBC Driver 13 for SQL Server}};Server=tcp:{dbhost},1433;Database={dbname};Uid={dbuser};Pwd={dbpass}')
+params = urllib.parse.quote_plus(f'Driver={{ODBC Driver 17 for SQL Server}};Server=tcp:{dbhost},1433;Database={dbname};Uid={dbuser};Pwd={dbpass}')
 
 app.config.update(
     SQLALCHEMY_DATABASE_URI = "mssql+pyodbc:///?odbc_connect=%s" % params,
