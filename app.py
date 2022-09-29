@@ -5,9 +5,9 @@ import os
 
 app = Flask(__name__)
 
-dbuser=os.environ['DBUSER'],
-dbpass=os.environ['DBPASS'],
-dbhost=os.environ['DBHOST'],
+dbuser=os.environ['DBUSER']
+dbpass=os.environ['DBPASS']
+dbhost=os.environ['DBHOST']
 dbname=os.environ['DBNAME']
 cstr = 'DRIVER={ODBC Driver 13 for SQL Server};SERVER='+dbhost+';DATABASE='+dbname+';UID='+dbuser+';PWD='+ dbpass
 
