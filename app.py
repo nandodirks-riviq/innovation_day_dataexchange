@@ -10,7 +10,7 @@ def connection():
     dbpass=os.environ['DBPASS'],
     dbhost=os.environ['DBHOST'],
     dbname=os.environ['DBNAME']
-    cstr = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+s+';DATABASE='+d+';UID='+u+';PWD='+ p
+    cstr = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+dbhost+';DATABASE='+dbname+';UID='+dbuser+';PWD='+ dbpass
     return cstr
 
 app.config.update(
