@@ -32,10 +32,10 @@ db = SQLAlchemy(app)
 #         return hed + error_text
     
 @app.route('/')
-def testquery():
+def testdb2():
     try:
         result = db.session.execute("SELECT * FROM dbo.BuildVersion")
-        return f'<h1>{result}</h1>'
+        return f'<h1>{result.all()}</h1>'
     except Exception as e:
         return "<p>The error:<br>" + str(e) + "</p>"
 
