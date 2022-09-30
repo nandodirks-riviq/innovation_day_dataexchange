@@ -24,7 +24,8 @@ db = SQLAlchemy(app)
 def testdb():
     try:
         db.session.query(text('1')).from_statement(text('SELECT 1')).all()
-        return '<h1>It works.</h1>'
+        result = db.engine.execute("<SELECT * FROM dbo.BuildVersion")
+        return f'<h1>It works. + {result}</h1>'
     except Exception as e:
         # e holds description of the error
         error_text = "<p>The error:<br>" + str(e) + "</p>"
@@ -33,5 +34,4 @@ def testdb():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    result = db.engine.execute("<SELECT * FROM dbo.BuildVersion")
-    print(result)
+
