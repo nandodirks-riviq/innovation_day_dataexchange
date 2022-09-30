@@ -31,13 +31,13 @@ def testdb():
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
     
-# @app.route('/query')
-# def testquery():
-#     try:
-#         result = db.session.execute("SELECT * FROM dbo.BuildVersion")
-#         return result
-#     except Exception as e:
-#         return str(e)
+@app.route('/query')
+def testquery():
+    try:
+        result = db.session.execute("SELECT * FROM dbo.BuildVersion")
+        return result
+    except Exception as e:
+        return str(e)
 
 if __name__ == '__main__':
     app.run(debug=True)
