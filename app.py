@@ -24,7 +24,7 @@ db = SQLAlchemy(app)
 def testdb():
     try:
         db.session.query(text('1')).from_statement(text('SELECT 1')).all()
-        result = db.engine.execute("<SELECT * FROM dbo.BuildVersion")
+        result = db.session.execute("<SELECT * FROM dbo.BuildVersion")
         return f'<h1>It works. + {result}</h1>'
     except Exception as e:
         # e holds description of the error
