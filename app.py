@@ -33,3 +33,5 @@ def testdb():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    result = db.engine.execute("<SELECT * FROM dbo.BuildVersion")
+    print(result)
