@@ -7,7 +7,7 @@ import os
 import urllib.parse 
 import pyodbc
 import pandas as pd
-from sqlalchemy import create_engine 
+from sqlalchemy import create_engine, inspect
 
 app = Flask(__name__)
 
