@@ -52,9 +52,9 @@ completed_template = """
 def index():
     form = LanguageForm(request.form)
 
-    if form.validate():
+    if request.method == 'POST' and form.validate():
         print("POST request and form is valid")
-        language =  form.getlist('language')
+        cols =  form.language.data
         print("languages in wsgi.py: %s" % request.form['language'])
         return "<p>error1</p>"
     else:
