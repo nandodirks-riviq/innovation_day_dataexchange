@@ -35,8 +35,8 @@ def testdb():
 @app.route('/query')
 def testdb2():
     try:
-        result = db.session.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'BuildVersion'")
-        return f'<h1>{result.all()}</h1>'
+        result = db.session.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'BuildVersion'").all()
+        return f'<h1>{result[0]}</h1>'
     except Exception as e:
         return "<p>The error:<br>" + str(e) + "</p>"
 
