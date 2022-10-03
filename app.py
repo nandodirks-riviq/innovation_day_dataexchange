@@ -25,8 +25,8 @@ db = SQLAlchemy(app)
 class LanguageForm(Form):
     col_names = db.session.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'BuildVersion'").all()
     for i in col_names:
-        print(i[2:-3])
-    col_names = [i[2:-3] for i in col_names]
+        print(str(i)[2:-3])
+    col_names = [str(i)[2:-3] for i in col_names]
     language = SelectMultipleField(u'Desired columns', choices=col_names)
 
 template_form = """
