@@ -34,9 +34,8 @@ def testdb():
 @app.route('/query')
 def testdb2():
     try:
-        session = DBSession()
         query = (
-            session.query("dbo.BuildVersion")
+            db.session.query("dbo.BuildVersion")
             .limit(100000)
         )
         column_names = query.statement.columns.keys()
