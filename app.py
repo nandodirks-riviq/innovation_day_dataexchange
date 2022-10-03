@@ -36,7 +36,7 @@ def testdb():
 def testdb2():
     try:
         md = MetaData()
-        table = Table("dbo.BuildVersion", md, autoload=True, autoload_with=engine)
+        table = Table("dbo.BuildVersion", md, autoload=True, autoload_with=db)
         column_names  = [c.name for c in table.columns]
         return f'<h1>{column_names}</h1>'
     except Exception as e:
