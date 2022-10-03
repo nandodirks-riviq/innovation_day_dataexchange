@@ -33,9 +33,7 @@ class LanguageForm(Form):
     language = SelectMultipleField(u'Desired columns', choices=col_names)
     
 class TableForm(Form):
-    engine = create_engine(conn_str) 
-    insp = inspect(engine) 
-    tables = insp.get_table_names()
+    tables = db.session.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
     print(tables)
     table = SelectMultipleField(u'Desired table', choices=tables)
 
