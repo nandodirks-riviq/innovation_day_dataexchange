@@ -56,9 +56,9 @@ def index():
         print("POST request and form is valid")
         language =  form.getlist('language')
         print("languages in wsgi.py: %s" % request.form['language'])
-        return render_template_string(completed_template, language=language)
+        return "<p>error1</p>"
     else:
-        return "<p>error</p>"
+        return "<p>error2</p>"
     
 @app.route('/query')
 def testdb2():
