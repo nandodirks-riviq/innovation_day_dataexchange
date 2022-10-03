@@ -24,6 +24,7 @@ db = SQLAlchemy(app)
 
 class LanguageForm(Form):
     col_names = db.session.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'BuildVersion'").all()
+    col_names = [i[2:-3] for i in col_names]
     language = SelectMultipleField(u'Desired columns', choices=col_names)
 
 template_form = """
@@ -59,14 +60,6 @@ def index():
         return f"<p>{cols}</p>"
     else:
         return render_template_string(template_form, form=form)
-    
-@app.route('/query')
-def testdb2():
-    try:
-        
-        return f'<h1>{result[0]}</h1>'
-    except Exception as e:
-        return "<p>The error:<br>" + str(e) + "</p>"
 
 if __name__ == '__main__':
     app.run(debug=True)
