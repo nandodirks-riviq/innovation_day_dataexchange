@@ -33,7 +33,7 @@ class LanguageForm(Form):
 class TableForm(Form):
     tables = db.session.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
     tables = [str(i)[2:-3] for i in tables]
-    table = SelectMultipleField(u'Desired table', choices=tables)
+    table = SelectField(u'Desired table', choices=tables)
 
 template_form = """
 {% block content %}
