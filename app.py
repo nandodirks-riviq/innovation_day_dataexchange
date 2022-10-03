@@ -34,6 +34,7 @@ def testdb():
 @app.route('/query')
 def testdb2():
     try:
+        session = DBSession()
         query = (
             session.query("dbo.BuildVersion")
             .limit(100000)
