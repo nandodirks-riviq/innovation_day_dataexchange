@@ -23,7 +23,7 @@ app.config.update(
 db = SQLAlchemy(app)
 
 class LanguageForm(Form):
-    col_names = db.session.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'BuildVersion'").all()
+    col_names = db.session.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'Address'").all()
     for i in col_names:
         print(str(i)[2:-3])
     col_names = [str(i)[2:-3] for i in col_names]
@@ -59,7 +59,7 @@ def index():
         print("POST request and form is valid")
         cols =  form.language.data
         print("languages in wsgi.py: %s" % request.form['language'])
-        res = db.session.execute(f"SELECT {' ,'.join(cols)} FROM dbo.BuildVersion").all()
+        res = db.session.execute(f"SELECT {' ,'.join(cols)} FROM SalesLT.Address").all()
         return f"<p>{res}</p>"
     else:
         return render_template_string(template_form, form=form)
