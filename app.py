@@ -31,7 +31,7 @@ template_form = """
 <h1>Set Language</h1>
 
 <form method="POST" action="/">
-    <div>{{ form.language.label }} {{ form.language(rows=3, multiple=True) }}</div>
+    <div>{{ form.language.label }} {{ form.language(rows=4, multiple=True) }}</div>
     <button type="submit" class="btn">Submit</button>    
 </form>
 {% endblock %}
@@ -52,7 +52,7 @@ completed_template = """
 def index():
     form = LanguageForm(request.form)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and form.validate():
         print("POST request and form is valid")
         cols =  form.language.data
         print("languages in wsgi.py: %s" % request.form['language'])
