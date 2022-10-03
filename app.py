@@ -27,14 +27,12 @@ db = SQLAlchemy(app)
 
 class LanguageForm(Form):
     col_names = db.session.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'Address'").all()
-    for i in col_names:
-        print(str(i)[2:-3])
     col_names = [str(i)[2:-3] for i in col_names]
     language = SelectMultipleField(u'Desired columns', choices=col_names)
     
 class TableForm(Form):
     tables = db.session.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
-    print(tables)
+    tables = [str(i)[2:-3] for i in tables]
     table = SelectMultipleField(u'Desired table', choices=tables)
 
 template_form = """
@@ -68,7 +66,10 @@ def index():
         cols =  form.table.data
 
         df = pd.read_sql(f"SELECT * FROM {cols}", db.session.bind)
-        return f'<p>{df}<\p>'
+        resp = make_response(df.to_csv())
+        resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
+        resp.headers["Content-Type"] = "text/csv"
+        return resp
     else:
         return render_template_string(template_form, form=form)
     
