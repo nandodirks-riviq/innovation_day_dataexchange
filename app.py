@@ -7,6 +7,7 @@ import os
 import urllib.parse 
 import pyodbc
 import pandas as pd
+from sqlalchemy import create_engine 
 
 app = Flask(__name__)
 
@@ -29,13 +30,19 @@ class LanguageForm(Form):
         print(str(i)[2:-3])
     col_names = [str(i)[2:-3] for i in col_names]
     language = SelectMultipleField(u'Desired columns', choices=col_names)
+    
+class TableForm(Form):
+    engine = create_engine(self.__connection_string) 
+    insp = inspect(engine) 
+    tables = insp.get_table_names()
+    table = SelectMultipleField(u'Desired table', choices=tables)
 
 template_form = """
 {% block content %}
 <h1>Set Language</h1>
 
 <form method="POST" action="/">
-    <div>{{ form.language.label }} {{ form.language(rows=4, multiple=True) }}</div>
+    <div>{{ form.table.label }} {{ form.table(rows=4, multiple=True) }}</div>
     <button type="submit" class="btn">Submit</button>    
 </form>
 {% endblock %}
@@ -54,20 +61,34 @@ completed_template = """
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    form = LanguageForm(request.form)
+    form = TableForm(request.form)
 
     if request.method == 'POST':
         print("POST request and form is valid")
-        cols =  form.language.data
-        print("languages in wsgi.py: %s" % request.form['language'])
+        cols =  form.table.data
 
-        df = pd.read_sql(f"SELECT {', '.join(cols)} FROM SalesLT.Address", db.session.bind)
-        resp = make_response(df.to_csv())
-        resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
-        resp.headers["Content-Type"] = "text/csv"
-        return resp
+        df = pd.read_sql(f"SELECT * FROM {cols}", db.session.bind)
+        return f'<p>{df}<\p>'
     else:
         return render_template_string(template_form, form=form)
+    
+    
+# @app.route('/', methods=['GET', 'POST'])
+# def index():
+#     form = LanguageForm(request.form)
+
+#     if request.method == 'POST':
+#         print("POST request and form is valid")
+#         cols =  form.language.data
+#         print("languages in wsgi.py: %s" % request.form['language'])
+
+#         df = pd.read_sql(f"SELECT {', '.join(cols)} FROM SalesLT.Address", db.session.bind)
+#         resp = make_response(df.to_csv())
+#         resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
+#         resp.headers["Content-Type"] = "text/csv"
+#         return resp
+#     else:
+#         return render_template_string(template_form, form=form)
 
 if __name__ == '__main__':
     app.run(debug=True)
