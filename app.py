@@ -6,6 +6,7 @@ from sqlalchemy.sql import text
 import os
 import urllib.parse 
 import pyodbc
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -60,13 +61,8 @@ def index():
         cols =  form.language.data
         print("languages in wsgi.py: %s" % request.form['language'])
         res = db.session.execute(f"SELECT {' ,'.join(cols)} FROM SalesLT.Address").all()
-        csv = ''
-        for i in res:
-            line = ''
-            for j in i:
-                line += j + ','
-            csv += line + '\n'
-        return f"<p>{csv}</p>"
+        df = pd.read_sql(f"SELECT {', '.join(cols)} FROM SalesLT.Address", db.session.bind)
+        return f"<p>{df}</p>"
     else:
         return render_template_string(template_form, form=form)
 
