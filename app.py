@@ -35,7 +35,7 @@ def testdb():
 @app.route('/query')
 def testdb2():
     try:
-        result = db.session.execute("SELECT * FROM INFORMATION_SCHEMA.columns WHERE object_id = OBJECT_ID('dbo.BuildVersion')")
+        result = db.session.execute("SELECT * FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'dbo.BuildVersion'")
         return f'<h1>{result.all()}</h1>'
     except Exception as e:
         return "<p>The error:<br>" + str(e) + "</p>"
