@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Table
+from sqlalchemy import Table, MetaData
 from sqlalchemy.sql import text
 import os
 import urllib.parse 
@@ -35,6 +35,7 @@ def testdb():
 @app.route('/query')
 def testdb2():
     try:
+        md = MetaData()
         table = Table("dbo.BuildVersion", md, autoload=True, autoload_with=engine)
         column_names  = [c.name for c in table.columns]
         return f'<h1>{column_names}</h1>'
