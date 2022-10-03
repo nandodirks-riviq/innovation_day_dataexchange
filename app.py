@@ -23,7 +23,8 @@ app.config.update(
 db = SQLAlchemy(app)
 
 class LanguageForm(Form):
-    language = SelectMultipleField(u'Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
+    col_names = db.session.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'BuildVersion'").all()
+    language = SelectMultipleField(u'Desired columns', choices=col_names)
 
 template_form = """
 {% block content %}
@@ -62,7 +63,7 @@ def index():
 @app.route('/query')
 def testdb2():
     try:
-        result = db.session.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'BuildVersion'").all()
+        
         return f'<h1>{result[0]}</h1>'
     except Exception as e:
         return "<p>The error:<br>" + str(e) + "</p>"
