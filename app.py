@@ -58,7 +58,7 @@ def index():
         print("languages in wsgi.py: %s" % request.form['language'])
         return "<p>error1</p>"
     else:
-        return "<p>error2</p>"
+        return render_template_string(template_form, form=form)
     
 @app.route('/query')
 def testdb2():
