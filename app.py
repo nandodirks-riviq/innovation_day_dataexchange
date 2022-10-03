@@ -60,9 +60,12 @@ def index():
         print("POST request and form is valid")
         cols =  form.language.data
         print("languages in wsgi.py: %s" % request.form['language'])
-        res = db.session.execute(f"SELECT {' ,'.join(cols)} FROM SalesLT.Address").all()
+
         df = pd.read_sql(f"SELECT {', '.join(cols)} FROM SalesLT.Address", db.session.bind)
-        return f"<p>{df}</p>"
+        resp = make_response(df.to_csv())
+        resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
+        resp.headers["Content-Type"] = "text/csv"
+        return resp
     else:
         return render_template_string(template_form, form=form)
 
