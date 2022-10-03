@@ -34,8 +34,12 @@ def testdb():
 @app.route('/query')
 def testdb2():
     try:
-        result = db.session.execute("SELECT * FROM dbo.BuildVersion")
-        return f'<h1>{result.all()}</h1>'
+        query = (
+            session.query("dbo.BuildVersion")
+            .limit(100000)
+        )
+        column_names = query.statement.columns.keys()
+        return f'<h1>{column_names}</h1>'
     except Exception as e:
         return "<p>The error:<br>" + str(e) + "</p>"
 
