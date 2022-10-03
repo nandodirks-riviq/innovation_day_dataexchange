@@ -60,7 +60,13 @@ def index():
         cols =  form.language.data
         print("languages in wsgi.py: %s" % request.form['language'])
         res = db.session.execute(f"SELECT {' ,'.join(cols)} FROM SalesLT.Address").all()
-        return f"<p>{res}</p>"
+        csv = ''
+        for i in res:
+            line = ''
+            for j in i:
+                line += j + ','
+            csv += line + '\n'
+        return f"<p>{csv}</p>"
     else:
         return render_template_string(template_form, form=form)
 
