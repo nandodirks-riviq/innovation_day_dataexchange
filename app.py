@@ -21,16 +21,42 @@ app.config.update(
 
 db = SQLAlchemy(app)
 
-@app.route('/')
-def testdb():
-    try:
-        db.session.query(text('1')).from_statement(text('SELECT 1')).all()
-        return f'<h1>It works.</h1>'
-    except Exception as e:
-        # e holds description of the error
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
+class LanguageForm(Form):
+    language = SelectMultipleField(u'Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
+
+template_form = """
+{% block content %}
+<h1>Set Language</h1>
+
+<form method="POST" action="/">
+    <div>{{ form.language.label }} {{ form.language(rows=3, multiple=True) }}</div>
+    <button type="submit" class="btn">Submit</button>    
+</form>
+{% endblock %}
+
+"""
+
+completed_template = """
+{% block content %}
+<h1>Language Selected</h1>
+
+<div>{{ language }}</div>
+
+{% endblock %}
+
+"""
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    form = LanguageForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+        print "POST request and form is valid"
+        language =  form.language.data
+        print "languages in wsgi.py: %s" % request.form['language']
+        return render_template_string(completed_template, language=language)
+    else:
+        return render_template_string(template_form, form=form)
     
 @app.route('/query')
 def testdb2():
