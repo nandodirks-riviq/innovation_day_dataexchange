@@ -36,6 +36,7 @@ class TableForm(Form):
     engine = create_engine(conn_str) 
     insp = inspect(engine) 
     tables = insp.get_table_names()
+    print(tables)
     table = SelectMultipleField(u'Desired table', choices=tables)
 
 template_form = """
