@@ -24,6 +24,8 @@ db = SQLAlchemy(app)
 
 class LanguageForm(Form):
     col_names = db.session.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'BuildVersion'").all()
+    for i in col_names:
+        print(i)
     col_names = [i[2:-3] for i in col_names]
     language = SelectMultipleField(u'Desired columns', choices=col_names)
 
@@ -57,6 +59,7 @@ def index():
         print("POST request and form is valid")
         cols =  form.language.data
         print("languages in wsgi.py: %s" % request.form['language'])
+        db.session.execute("SELECT * FROM dbo.BuildVersion").all()
         return f"<p>{cols}</p>"
     else:
         return render_template_string(template_form, form=form)
