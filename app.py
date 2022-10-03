@@ -1,5 +1,5 @@
 from flask import Flask, render_template_string, request, make_response
-from wtforms import Form, SelectMultipleField
+from wtforms import Form, SelectMultipleField, SelectField
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, MetaData
 from sqlalchemy.sql import text
