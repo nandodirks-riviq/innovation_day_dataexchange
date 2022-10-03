@@ -16,9 +16,10 @@ dbpass=os.environ['DBPASS']
 dbhost=os.environ['DBHOST']
 dbname=os.environ['DBNAME']
 params = urllib.parse.quote_plus(f'Driver={{ODBC Driver 17 for SQL Server}};Server=tcp:{dbhost},1433;Database={dbname};Uid={dbuser};Pwd={dbpass}')
+conn_str = "mssql+pyodbc:///?odbc_connect=%s" % params
 
 app.config.update(
-    SQLALCHEMY_DATABASE_URI = "mssql+pyodbc:///?odbc_connect=%s" % params,
+    SQLALCHEMY_DATABASE_URI = conn_str,
     SQLALCHEMY_TRACK_MODIFICATIONS = False,
 )
 
@@ -32,7 +33,7 @@ class LanguageForm(Form):
     language = SelectMultipleField(u'Desired columns', choices=col_names)
     
 class TableForm(Form):
-    engine = create_engine(self.__connection_string) 
+    engine = create_engine(conn_str) 
     insp = inspect(engine) 
     tables = insp.get_table_names()
     table = SelectMultipleField(u'Desired table', choices=tables)
