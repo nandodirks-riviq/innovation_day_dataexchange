@@ -59,8 +59,8 @@ def index():
         print("POST request and form is valid")
         cols =  form.language.data
         print("languages in wsgi.py: %s" % request.form['language'])
-        db.session.execute("SELECT * FROM dbo.BuildVersion").all()
-        return f"<p>{cols}</p>"
+        res = db.session.execute(f"SELECT {' ,'.join(cols)} FROM dbo.BuildVersion").all()
+        return f"<p>{res}</p>"
     else:
         return render_template_string(template_form, form=form)
 
