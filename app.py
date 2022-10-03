@@ -56,7 +56,7 @@ def index():
         print("POST request and form is valid")
         cols =  form.language.data
         print("languages in wsgi.py: %s" % request.form['language'])
-        return "<p>cols</p>"
+        return f"<p>{cols}</p>"
     else:
         return render_template_string(template_form, form=form)
     
