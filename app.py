@@ -102,7 +102,7 @@ def get_tables():
 def index():
     if request.method == "POST":
         req_table = request.form.get('table')
-        req_cols = request.form.get('cols')
+        req_cols = request.form.getlist('cols')
         
         df = pd.read_sql(f"SELECT {', '.join(req_cols)} FROM SalesLT.Address", db.session.bind)
         resp = make_response(df.to_csv())
