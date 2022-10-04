@@ -39,7 +39,7 @@ def get_columns(table):
     
 def get_tables():
     table_data = db.session.execute("SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
-    tables = [str(i[1])[2:-3] for i in table_data]
+    tables = [str(i[1]) for i in table_data]
     print(tables)
     schema_tables = ['.'.join(i) for i in table_data]
     return tables, schema_tables
