@@ -25,10 +25,10 @@ db = SQLAlchemy(app)
 
 def get_meta_data():
     meta_dict = {}
-    tables = get_tables()
-    for i in tables:
-        cols = get_columns(i)
-        meta_dict[i] = cols
+    tables, schema_tables = get_tables()
+    for i, table in enumerate(tables):
+        cols = get_columns(table)
+        meta_dict[schema_tables[i]] = cols
     return meta_dict
 
 def get_columns(table):
@@ -39,65 +39,9 @@ def get_columns(table):
 def get_tables():
     tables = db.session.execute("SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
     print(tables)
-    tables = [str(i)[2:-3] for i, j in tables]
-    return tables
-
-# template_form = """
-# {% block content %}
-# <h1>Set Language</h1>
-
-# <form method="POST" action="/">
-#     <div>{{ form.table.label }} {{ form.table(rows=4, multiple=True) }}</div>
-#     <button type="submit" class="btn">Submit</button>    
-# </form>
-# {% endblock %}
-
-# """
-
-# completed_template = """
-# {% block content %}
-# <h1>Language Selected</h1>
-
-# <div>{{ language }}</div>
-
-# {% endblock %}
-
-# """
-
-# @app.route('/', methods=['GET', 'POST'])
-# def index():
-#     form = TableForm(request.form)
-
-#     if request.method == 'POST':
-#         print("POST request and form is valid")
-#         cols =  form.table.data
-
-#         df = pd.read_sql(f"SELECT * FROM {cols}", db.session.bind)
-#         resp = make_response(df.to_csv())
-#         resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
-#         resp.headers["Content-Type"] = "text/csv"
-#         return resp
-#     else:
-#         return render_template_string(template_form, form=form)
-    
-    
-# # @app.route('/', methods=['GET', 'POST'])
-# # def index():
-# #     form = LanguageForm(request.form)
-
-# #     if request.method == 'POST':
-# #         print("POST request and form is valid")
-# #         cols =  form.language.data
-# #         print("languages in wsgi.py: %s" % request.form['language'])
-
-# #         df = pd.read_sql(f"SELECT {', '.join(cols)} FROM SalesLT.Address", db.session.bind)
-# #         resp = make_response(df.to_csv())
-# #         resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
-# #         resp.headers["Content-Type"] = "text/csv"
-# #         return resp
-# #     else:
-# #         return render_template_string(template_form, form=form)
-
+    tables = [str(i[1])[2:-3] for i in tables]
+    schema_table = ['.'.join(i) for i in tables]
+    return tables, schema_tables
 
 @app.route('/', methods =["GET", "POST"])
 def index():
@@ -105,7 +49,7 @@ def index():
         req_table = request.form.get('table')
         req_cols = request.form.getlist('cols')
         
-        df = pd.read_sql(f"SELECT {', '.join(req_cols)} FROM SalesLT.Address", db.session.bind)
+        df = pd.read_sql(f"SELECT {', '.join(req_cols)} FROM {req_table}", db.session.bind)
         resp = make_response(df.to_csv())
         resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
         resp.headers["Content-Type"] = "text/csv"
