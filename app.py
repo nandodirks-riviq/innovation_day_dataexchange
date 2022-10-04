@@ -32,7 +32,7 @@ def get_meta_data():
     return meta_dict
 
 def get_columns(table):
-    col_names = db.session.execute(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = {table}").all()
+    col_names = db.session.execute(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = '{table}'").all()
     col_names = [str(i)[2:-3] for i in col_names]
     return col_names
     
