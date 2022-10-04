@@ -104,7 +104,7 @@ def index():
         req_table = request.form.get('table')
         req_cols = request.form.get('cols')
         
-        df = pd.read_sql(f"SELECT * FROM {req_table}", db.session.bind)
+        df = pd.read_sql(f"SELECT {', '.join(cols)} FROM SalesLT.Address", db.session.bind)
         resp = make_response(df.to_csv())
         resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
         resp.headers["Content-Type"] = "text/csv"
