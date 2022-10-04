@@ -39,6 +39,7 @@ def get_columns(table):
 def get_tables():
     tables = db.session.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
     tables = [str(i)[2:-3] for i in tables]
+    print(tables)
     return tables
 
 # template_form = """
