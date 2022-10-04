@@ -39,7 +39,6 @@ def get_columns(table):
 def get_tables():
     tables = db.session.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
     tables = [str(i)[2:-3] for i in tables]
-    tables = ['Customer', 'ProductModel']
     return tables
 
 # template_form = """
@@ -111,7 +110,7 @@ template = """
     <select id="system">
         <option></option>
     </select>
-    <select id="game"></select>
+    <select id="game" multiple></select>
     <button type="submit">Play</button>
 </form>
 <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
