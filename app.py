@@ -1,4 +1,4 @@
-# from flask import Flask, render_template_string, request, make_response
+from flask import Flask, render_template_string, request, make_response
 # from wtforms import Form, SelectMultipleField, SelectField
 # from flask_sqlalchemy import SQLAlchemy
 # from sqlalchemy import Table, MetaData
@@ -9,31 +9,39 @@
 # import pandas as pd
 # from sqlalchemy import create_engine, inspect
 
-# app = Flask(__name__)
+app = Flask(__name__)
 
-# dbuser=os.environ['DBUSER']
-# dbpass=os.environ['DBPASS']
-# dbhost=os.environ['DBHOST']
-# dbname=os.environ['DBNAME']
-# params = urllib.parse.quote_plus(f'Driver={{ODBC Driver 17 for SQL Server}};Server=tcp:{dbhost},1433;Database={dbname};Uid={dbuser};Pwd={dbpass}')
-# conn_str = "mssql+pyodbc:///?odbc_connect=%s" % params
+dbuser=os.environ['DBUSER']
+dbpass=os.environ['DBPASS']
+dbhost=os.environ['DBHOST']
+dbname=os.environ['DBNAME']
+params = urllib.parse.quote_plus(f'Driver={{ODBC Driver 17 for SQL Server}};Server=tcp:{dbhost},1433;Database={dbname};Uid={dbuser};Pwd={dbpass}')
+conn_str = "mssql+pyodbc:///?odbc_connect=%s" % params
 
-# app.config.update(
-#     SQLALCHEMY_DATABASE_URI = conn_str,
-#     SQLALCHEMY_TRACK_MODIFICATIONS = False,
-# )
+app.config.update(
+    SQLALCHEMY_DATABASE_URI = conn_str,
+    SQLALCHEMY_TRACK_MODIFICATIONS = False,
+)
 
-# db = SQLAlchemy(app)
+db = SQLAlchemy(app)
 
-# class LanguageForm(Form):
-#     col_names = db.session.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'Address'").all()
-#     col_names = [str(i)[2:-3] for i in col_names]
-#     language = SelectMultipleField(u'Desired columns', choices=col_names)
+def get_meta_data():
+    meta_dict = {}
+    tables = get_tables()
+    for i in tables:
+        cols = get_columns(i)
+        meta_dict[i] = cols
+    return meta_dict
+
+def get_columns(table):
+    col_names = db.session.execute(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = {table}").all()
+    col_names = [str(i)[2:-3] for i in col_names]
+    return col_names
     
-# class TableForm(Form):
-#     tables = db.session.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
-#     tables = [str(i)[2:-3] for i in tables]
-#     table = SelectField(u'Desired table', choices=tables)
+def get_tables():
+    tables = db.session.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
+    tables = [str(i)[2:-3] for i in tables]
+    return tables
 
 # template_form = """
 # {% block content %}
@@ -91,20 +99,10 @@
 # #     else:
 # #         return render_template_string(template_form, form=form)
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-
-from flask import Flask, render_template_string
-
-app = Flask(__name__)
 
 @app.route('/')
 def index():
-    systems = {
-        'PlayStation': ['Spyro', 'Crash', 'Ico'],
-        'N64': ['Mario', 'Superman']
-    }
+    systems = get_meta_data()
 
     return render_template_string(template, systems=systems)
 
