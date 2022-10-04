@@ -37,10 +37,10 @@ def get_columns(table):
     return col_names
     
 def get_tables():
-    tables = db.session.execute("SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
+    table_data = db.session.execute("SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
     print(tables)
     tables = [str(i[1])[2:-3] for i in tables]
-    schema_tables = ['.'.join(i) for i in tables]
+    schema_tables = ['.'.join(i) for i in table_data]
     return tables, schema_tables
 
 @app.route('/', methods =["GET", "POST"])
