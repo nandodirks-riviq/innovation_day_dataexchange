@@ -98,19 +98,28 @@ def get_tables():
 # #         return render_template_string(template_form, form=form)
 
 
-@app.route('/')
+@app.route('/', methods =["GET", "POST"])
 def index():
-    systems = get_meta_data()
-
-    return render_template_string(template, systems=systems)
+    if request.method == "POST":
+        req_table = request.form.get('table')
+        req_cols = request.form.get('cols')
+        
+        df = pd.read_sql(f"SELECT * FROM {req_table}", db.session.bind)
+        resp = make_response(df.to_csv())
+        resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
+        resp.headers["Content-Type"] = "text/csv"
+        return resp
+    else:  
+        systems = get_meta_data()
+        return render_template_string(template, systems=systems)
 
 template = """
 <!doctype html>
 <form>
-    <select id="system">
+    <select id="system" name='table'>
         <option></option>
     </select>
-    <select id="game" multiple></select>
+    <select id="game" name='cols' multiple></select>
     <button type="submit">Play</button>
 </form>
 <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -141,6 +150,7 @@ template = """
     form.submit(function(ev) {
         ev.preventDefault();
         alert("playing " + game.val() + " on " + system.val());
+        
     });
 </script>
 """
