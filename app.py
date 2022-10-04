@@ -115,7 +115,7 @@ def index():
 
 template = """
 <!doctype html>
-<form>
+<form action="{{ url_for("index")}}" method="post">
     <select id="system" name='table'>
         <option></option>
     </select>
@@ -146,13 +146,8 @@ template = """
             game.append($('<option/>', {'value': games[i], 'text': games[i]}));
         }
     });
-
-    form.submit(function(ev) {
-        ev.preventDefault();
-        alert("playing " + game.val() + " on " + system.val());
-        
-    });
 </script>
 """
+
 if __name__ == '__main__':
     app.run(debug=True)
