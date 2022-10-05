@@ -6,6 +6,9 @@ import os
 import urllib.parse 
 import pyodbc
 import pandas as pd
+from azure.mgmt.datafactory import DataFactoryManagementClient
+import uuid
+from azure.storage.blob import BlobServiceClient
 
 app = Flask(__name__)
 
@@ -22,6 +25,20 @@ app.config.update(
 )
 
 db = SQLAlchemy(app)
+
+
+connect_str = 'DefaultEndpointsProtocol=https;AccountName=exportblobdelivery;AccountKey=8n9ULDJ9gZlIjfclF83EN3usDEHMbNpvAdbjwUFwfPqJ7sgF1uufD8SUiAEILeyNHDyw/Vnukqyz+AStaA66HQ==;EndpointSuffix=core.windows.net'
+
+blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+
+container_name = 'exports'
+
+container_client = blob_service_client.get_container_client(container_name)
+
+blob_list = container_client.list_blobs()
+for blob in blob_list:
+    print("\t" + blob.name)
+container_client = blob_service_client.get_container_client(container= container_name)
 
 def get_meta_data():
     meta_dict = {}
@@ -44,17 +61,19 @@ def get_tables():
     schema_tables = ['.'.join(i) for i in table_data]
     return tables, schema_tables
 
+
 @app.route('/', methods =["GET", "POST"])
 def index():
     if request.method == "POST":
         req_table = request.form.get('table')
         req_cols = request.form.getlist('cols')
+        run_response = adf_client.pipelines.create_run(rg_name, df_name, p_name, parameters={})
         
-        df = pd.read_sql(f"SELECT {', '.join(req_cols)} FROM {req_table}", db.session.bind)
-        resp = make_response(df.to_csv())
-        resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
-        resp.headers["Content-Type"] = "text/csv"
-        return resp
+#         df = pd.read_sql(f"SELECT {', '.join(req_cols)} FROM {req_table}", db.session.bind)
+#         resp = make_response(df.to_csv())
+#         resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
+#         resp.headers["Content-Type"] = "text/csv"
+        return container_client.download_blob(blob.name).readall()
     else:  
         systems = get_meta_data()
         return render_template_string(template, systems=systems)
@@ -94,6 +113,8 @@ template = """
     });
 </script>
 """
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
