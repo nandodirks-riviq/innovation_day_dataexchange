@@ -7,6 +7,7 @@ from azure.mgmt.datafactory import DataFactoryManagementClient
 from azure.storage.blob import BlobServiceClient
 from azure.identity import ClientSecretCredential
 from azure.mgmt.datafactory import DataFactoryManagementClient
+import time
 
 app = Flask(__name__)
 
@@ -48,7 +49,6 @@ def get_meta_data():
     meta_dict = {}
     tables, schema_tables = get_tables()
     for i, table in enumerate(tables):
-        print(table)
         cols = get_columns(table)
         meta_dict[schema_tables[i]] = cols
     return meta_dict
@@ -61,7 +61,6 @@ def get_columns(table):
 def get_tables():
     table_data = db.session.execute("SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES").all()
     tables = [str(i[1]) for i in table_data]
-    print(tables)
     schema_tables = ['.'.join(i) for i in table_data]
     return tables, schema_tables
 
@@ -124,8 +123,6 @@ template = """
     });
 </script>
 """
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
