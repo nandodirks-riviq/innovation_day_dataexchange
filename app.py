@@ -26,13 +26,9 @@ app.config.update(
 
 db = SQLAlchemy(app)
 
-
 connect_str = 'DefaultEndpointsProtocol=https;AccountName=exportblobdelivery;AccountKey=8n9ULDJ9gZlIjfclF83EN3usDEHMbNpvAdbjwUFwfPqJ7sgF1uufD8SUiAEILeyNHDyw/Vnukqyz+AStaA66HQ==;EndpointSuffix=core.windows.net'
-
 blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-
 container_name = 'exports'
-
 container_client = blob_service_client.get_container_client(container_name)
 
 blob_list = container_client.list_blobs()
@@ -67,13 +63,13 @@ def index():
     if request.method == "POST":
         req_table = request.form.get('table')
         req_cols = request.form.getlist('cols')
-        run_response = adf_client.pipelines.create_run(rg_name, df_name, p_name, parameters={})
+#         run_response = adf_client.pipelines.create_run(rg_name, df_name, p_name, parameters={})
         
 #         df = pd.read_sql(f"SELECT {', '.join(req_cols)} FROM {req_table}", db.session.bind)
-#         resp = make_response(df.to_csv())
-#         resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
-#         resp.headers["Content-Type"] = "text/csv"
-        return container_client.download_blob(blob.name).readall()
+        resp = make_response(container_client.download_blob(blob.name).readall())
+        resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
+        resp.headers["Content-Type"] = "text/csv"
+        return resp
     else:  
         systems = get_meta_data()
         return render_template_string(template, systems=systems)
