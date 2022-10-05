@@ -1,13 +1,9 @@
 from flask import Flask, render_template_string, request, make_response
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Table, MetaData
-from sqlalchemy.sql import text
 import os
 import urllib.parse 
 import pyodbc
-import pandas as pd
 from azure.mgmt.datafactory import DataFactoryManagementClient
-import uuid
 from azure.storage.blob import BlobServiceClient
 from azure.identity import ClientSecretCredential
 from azure.mgmt.datafactory import DataFactoryManagementClient
@@ -76,7 +72,15 @@ def index():
         req_table = request.form.get('table')
         req_cols = request.form.getlist('cols')
         run_response = adf_client.pipelines.create_run(rg_name, df_name, p_name, parameters={})
-
+        
+        pipe_status = 'created'
+        while pipe_status != 'Succeeded':
+            time.sleep(30)
+            pipeline_run = adf_client.pipeline_runs.get(
+                rg_name, df_name, run_response.run_id)
+            print("\n\tPipeline run status: {}".format(pipeline_run.status))
+            pipe_status = pipeline_run.status
+            
         resp = make_response(container_client.download_blob(blob.name).readall())
         resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
         resp.headers["Content-Type"] = "text/csv"
