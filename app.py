@@ -9,23 +9,35 @@ import pandas as pd
 from azure.mgmt.datafactory import DataFactoryManagementClient
 import uuid
 from azure.storage.blob import BlobServiceClient
+from azure.identity import ClientSecretCredential
+from azure.mgmt.datafactory import DataFactoryManagementClient
 
 app = Flask(__name__)
 
+
+#sql db connection
 dbuser=os.environ['DBUSER']
 dbpass=os.environ['DBPASS']
 dbhost=os.environ['DBHOST']
 dbname=os.environ['DBNAME']
 params = urllib.parse.quote_plus(f'Driver={{ODBC Driver 17 for SQL Server}};Server=tcp:{dbhost},1433;Database={dbname};Uid={dbuser};Pwd={dbpass}')
 conn_str = "mssql+pyodbc:///?odbc_connect=%s" % params
-
 app.config.update(
     SQLALCHEMY_DATABASE_URI = conn_str,
     SQLALCHEMY_TRACK_MODIFICATIONS = False,
 )
-
 db = SQLAlchemy(app)
 
+
+#adf connection
+subscription_id = '4d879729-ae6a-47cf-9e85-0d3a2685fa52'
+rg_name = 'rg-data_delivery-dev-westeu'
+df_name = 'data-delivery-fact'
+p_name = 'pipeline1'
+credentials = ClientSecretCredential(client_id='c71f3d68-311f-4220-8c1b-ac4f75e48b29', client_secret='Oep8Q~5BsBSta.lgqNID4~K8nuCjtBIeQqZnwcya', tenant_id='540d6e0e-8b44-4420-a0b5-a06c4d7f9666')
+adf_client = DataFactoryManagementClient(credentials, subscription_id)
+
+#blob connection
 connect_str = 'DefaultEndpointsProtocol=https;AccountName=exportblobdelivery;AccountKey=8n9ULDJ9gZlIjfclF83EN3usDEHMbNpvAdbjwUFwfPqJ7sgF1uufD8SUiAEILeyNHDyw/Vnukqyz+AStaA66HQ==;EndpointSuffix=core.windows.net'
 blob_service_client = BlobServiceClient.from_connection_string(connect_str)
 container_name = 'exports'
@@ -63,9 +75,8 @@ def index():
     if request.method == "POST":
         req_table = request.form.get('table')
         req_cols = request.form.getlist('cols')
-#         run_response = adf_client.pipelines.create_run(rg_name, df_name, p_name, parameters={})
-        
-#         df = pd.read_sql(f"SELECT {', '.join(req_cols)} FROM {req_table}", db.session.bind)
+        run_response = adf_client.pipelines.create_run(rg_name, df_name, p_name, parameters={})
+
         resp = make_response(container_client.download_blob(blob.name).readall())
         resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
         resp.headers["Content-Type"] = "text/csv"
