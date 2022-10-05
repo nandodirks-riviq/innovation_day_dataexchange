@@ -4,7 +4,6 @@ Flask-SQLAlchemy
 SQLAlchemy
 pyodbc
 wtforms
-pandas
 azure-storage-blob
 azure-identity
 azure-mgmt-datafactory
