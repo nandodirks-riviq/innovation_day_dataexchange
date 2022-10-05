@@ -70,7 +70,7 @@ def index():
     if request.method == "POST":
         req_table = request.form.get('table')
         req_cols = request.form.getlist('cols')
-        run_response = adf_client.pipelines.create_run(rg_name, df_name, p_name, parameters={in_schema= req_table.split('.')[0],in_table= req_table.split('.')[1], out_filename=test_app.txt})
+        run_response = adf_client.pipelines.create_run(rg_name, df_name, p_name, parameters={'in_schema'= req_table.split('.')[0],'in_table'= req_table.split('.')[1], 'out_filename'=test_app.txt})
         
         pipe_status = 'created'
         while pipe_status != 'Succeeded':
