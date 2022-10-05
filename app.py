@@ -80,7 +80,7 @@ def index():
             print("\n\tPipeline run status: {}".format(pipeline_run.status))
             pipe_status = pipeline_run.status
             
-        resp = make_response(container_client.download_blob(blob.name).readall())
+        resp = make_response(container_client.download_blob('test_app.txt').readall())
         resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
         resp.headers["Content-Type"] = "text/csv"
         return resp
